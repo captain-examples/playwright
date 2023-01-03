@@ -1,2 +1,2 @@
 # playwright
-How to integrate Captain with PHPUnit 
+How to integrate Captain with Playwright
