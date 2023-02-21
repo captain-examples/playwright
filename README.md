@@ -43,3 +43,13 @@ Take a look at the [final workflow!][workflow-with-captain]
 [create-access-token]: https://www.rwx.com/docs/access-tokens
 [workflow-with-captain]: https://github.com/captain-examples/playwright/blob/main/.github/workflows/ci.yml
 [test-suite-integration]: https://www.rwx.com/captain/docs/test-suite-integration
+
+# Testing ABQ with Playwright
+
+Update `package.json` with a path to your local copy of RWX's playwright fork, then:
+
+```bash
+npm install
+npm run build
+ABQ_LOG=abq=debug abq test -n 2 -- npx playwright test --project chromium
+```

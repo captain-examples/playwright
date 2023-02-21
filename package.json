@@ -8,6 +8,9 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "@playwright/test": "^1.29.1"
+    "@playwright/test": "file:../../rwx/playwright/packages/playwright-test"
+  },
+  "overrides": {
+    "playwright-core": "file:../../rwx/playwrightpackagesplaywright-core"
   }
 }
