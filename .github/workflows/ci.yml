@@ -18,12 +18,7 @@ jobs:
       run: npx playwright install --with-deps
     - uses: rwx-research/setup-captain@v1
     - name: Run Playwright tests
-      run: |
-        captain run \
-          --suite-id captain-examples-playwright \
-          --test-results $PLAYWRIGHT_JSON_OUTPUT_NAME \
-          -- \
-          npx playwright test --reporter=json
+      run: captain run captain-examples-playwright
       env:
         PLAYWRIGHT_JSON_OUTPUT_NAME: tmp/results.json
         RWX_ACCESS_TOKEN: ${{ secrets.RWX_ACCESS_TOKEN }}
