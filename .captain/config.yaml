@@ -1,0 +1,5 @@
+test-suites:
+  captain-examples-playwright:
+    command: npx playwright test --reporter=json
+    results:
+      path: $PLAYWRIGHT_JSON_OUTPUT_NAME
