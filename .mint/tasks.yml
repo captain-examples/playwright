@@ -1,0 +1,33 @@
+tasks:
+  - key: git-clone
+    call: mint/checkout
+    with:
+      repository: https://github.com/captain-examples/playwright.git
+      ref: doug/failing
+  - key: setup-node
+    use: []
+    call: mint/setup-node
+    with:
+      node-version: 18.18.2
+  - key: npm-install
+    use: [git-clone, setup-node]
+    run: npm ci
+    filter:
+      - package.json
+      - package-lock.json
+  - key: setup-playwright
+    use: npm-install
+    run: npm exec -- playwright install --with-deps
+    filter:
+      - package.json
+      - package-lock.json
+      - playwright.config.ts
+      - node_modules/*
+  - key: run-playwright
+    use: setup-playwright
+    run: npm exec -- playwright test --reporter=json
+    env:
+      PLAYWRIGHT_JSON_OUTPUT_NAME: playwright-results.json
+    outputs:
+      test-results:
+        - path: playwright-results.json
