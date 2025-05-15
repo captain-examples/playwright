@@ -7,18 +7,42 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        shard: [0, 1]
+      fail-fast: false
     steps:
-    - uses: actions/checkout@v3
-    - uses: actions/setup-node@v3
-      with:
-        node-version: 16
-    - name: Install dependencies
-      run: npm ci
-    - name: Install Playwright Browsers
-      run: npx playwright install --with-deps
-    - uses: rwx-research/setup-captain@v1
-    - name: Run Playwright tests
-      run: captain run captain-examples-playwright
-      env:
-        PLAYWRIGHT_JSON_OUTPUT_NAME: tmp/results.json
-        RWX_ACCESS_TOKEN: ${{ secrets.RWX_ACCESS_TOKEN }}
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16
+      - name: Install dependencies
+        run: npm ci
+      - name: Install Playwright Browsers
+        run: npx playwright install --with-deps
+      - uses: rwx-research/setup-captain@v1
+      - name: Run Playwright tests
+        run: captain run captain-examples-playwright --partition-index ${{ matrix.shard }} --partition-total 2
+        env:
+          PLAYWRIGHT_JSON_OUTPUT_NAME: tmp/results.json
+          RWX_ACCESS_TOKEN: ${{ secrets.RWX_ACCESS_TOKEN }}
+      - name: Upload
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: captain-results-${{ matrix.shard }}
+          path: captain-results.json
+
+  merge-test-results:
+    needs: test
+    runs-on: ubuntu-latest
+    if: always()
+    steps:
+      - uses: rwx-research/setup-captain@v1
+      - name: Download All Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: test-results
+          pattern: captain-results-*
+          merge-multiple: false
+      - run: captain merge test-results/**/* --reporter github-step-summary

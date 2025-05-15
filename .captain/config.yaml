@@ -2,4 +2,16 @@ test-suites:
   captain-examples-playwright:
     command: npx playwright test --reporter=json
     results:
-      path: $PLAYWRIGHT_JSON_OUTPUT_NAME
+      language: Javascript
+      framework: Playwright
+      path: tmp/results.json
+    output:
+      print-summary: true
+      reporters:
+        rwx-v1-json: captain-results.json
+    fail-on-duplicate-test-id: true
+    partition:
+      command: npx playwright test {{ testFiles }} --reporter=json
+      trim-prefix: tests/
+      globs:
+        - tests/**/*.spec.js
